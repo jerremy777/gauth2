@@ -1,5 +1,5 @@
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CachedUser]') AND type in (N'U'))
 DROP TABLE CachedUser;
-
 GO
 
 CREATE TABLE CachedUser (
@@ -16,3 +16,4 @@ CREATE TABLE CachedUser (
   CONSTRAINT FK_CachedUser_AccessRule FOREIGN KEY (AccessRuleId) REFERENCES AccessRule(AccessRuleId),
   CONSTRAINT FK_CachedUser_Resource FOREIGN KEY (LastAccessedResourceId) REFERENCES [Resource](ResourceId)
 )
+GO
