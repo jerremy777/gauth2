@@ -1,5 +1,4 @@
-﻿using GAuth2.Entities;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using System.Data;
 

@@ -26,29 +26,14 @@ WITH RecursiveResources AS (
 SELECT * FROM RecursiveResources;
 */
 
+-- Drop indexes
+IF EXISTS (SELECT * FROM sys.indexes WHERE name = N'IX_Resource_AppId_ResourceKey_ParentResourceId')
+DROP INDEX IX_Resource_AppId_ResourceKey_ParentResourceId ON [Resource];
+GO
+
+
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Resource]') AND type in (N'U'))
 DROP TABLE [Resource];
-GO
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccessRule]') AND type in (N'U'))
-BEGIN
-  IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_AccessRule_Resource]'))
-  BEGIN
-    ALTER TABLE AccessRule
-    DROP CONSTRAINT FK_AccessRule_Resource;
-  END
-END
-GO
-
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CachedUser]') AND type in (N'U'))
-BEGIN
-  IF EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_CachedUser_Resource]'))
-  BEGIN
-    ALTER TABLE CachedUser
-    DROP CONSTRAINT FK_CachedUser_Resource;
-  END
-END
 GO
 
 
@@ -67,11 +52,7 @@ CREATE TABLE [Resource] (
   ModifiedOn DATETIME NOT NULL,
   ValidStart DATETIME NOT NULL,
   ValidEnd DATETIME NULL,
-  Active BIT NOT NULL DEFAULT 1,
-  CONSTRAINT FK_Resource_Application FOREIGN KEY (AppId) REFERENCES Application(AppId),
-  CONSTRAINT FK_Resource_ParentResource FOREIGN KEY (ParentResourceId) REFERENCES [Resource](ResourceId),
-  CONSTRAINT UQ_Resource_AppId_ResourceKey_ParentResourceId UNIQUE (AppId, ResourceKey, ParentResourceId),
-  CONSTRAINT CK_Resource_ParentResourceKey CHECK (ParentResourceId IS NOT NULL OR ResourceKey IS NOT NULL)
+  Active BIT NOT NULL DEFAULT 1
 )
 GO
 
@@ -80,17 +61,13 @@ CREATE INDEX IX_Resource_AppId_ResourceKey_ParentResourceId ON [Resource] (AppId
 GO
 
 
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccessRule]') AND type in (N'U'))
-BEGIN
-  ALTER TABLE AccessRule
-  ADD CONSTRAINT FK_AccessRule_Resource FOREIGN KEY (ResourceId) REFERENCES [Resource](ResourceId);
-END
+ALTER TABLE [Resource]
+ADD
+  CONSTRAINT FK_Resource_Application FOREIGN KEY (AppId) REFERENCES Application(AppId),
+  CONSTRAINT FK_Resource_ParentResource FOREIGN KEY (ParentResourceId) REFERENCES [Resource](ResourceId),
+  CONSTRAINT CK_Resource_ParentResourceKey CHECK (ParentResourceId IS NOT NULL OR ResourceKey IS NOT NULL)
 GO
 
-
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CachedUser]') AND type in (N'U'))
-BEGIN
-  ALTER TABLE CachedUser
-  ADD CONSTRAINT FK_CachedUser_Resource FOREIGN KEY (LastAccessedResourceId) REFERENCES [Resource](ResourceId);
-END
+ALTER TABLE [Resource]
+ADD CONSTRAINT UQ_Resource_AppId_ResourceKey_ParentResourceId UNIQUE (AppId, ResourceValue, ParentResourceId)
 GO

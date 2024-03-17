@@ -12,8 +12,13 @@ CREATE TABLE CachedUser (
   LastAccess DATETIME NOT NULL,
   LastAccessedResourceId INT NULL,
   Comment NVARCHAR(100) NULL,
-  Active BIT NOT NULL DEFAULT 1,
+  Active BIT NOT NULL DEFAULT 1
+)
+GO
+
+
+ALTER TABLE CachedUser
+ADD
   CONSTRAINT FK_CachedUser_AccessRule FOREIGN KEY (AccessRuleId) REFERENCES AccessRule(AccessRuleId),
   CONSTRAINT FK_CachedUser_Resource FOREIGN KEY (LastAccessedResourceId) REFERENCES [Resource](ResourceId)
-)
 GO

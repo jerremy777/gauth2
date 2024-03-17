@@ -2,6 +2,7 @@ IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Access
 DROP TABLE AccessRule;
 GO
 
+
 CREATE TABLE AccessRule (
   AccessRuleId INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
   AppId INT NOT NULL,
@@ -20,10 +21,15 @@ CREATE TABLE AccessRule (
   CreatedOn DATETIME NOT NULL,
   ValidStart DATETIME NOT NULL,
   ValidEnd DATETIME NULL,
-  Active BIT NOT NULL DEFAULT 1,
+  Active BIT NOT NULL DEFAULT 1
+)
+GO
+
+
+ALTER TABLE AccessRule
+ADD
   CONSTRAINT FK_AccessRule_AccessLevel FOREIGN KEY (AccessLevelId) REFERENCES AccessLevel(AccessLevelId),
   CONSTRAINT FK_AccessRule_Application FOREIGN KEY (AppId) REFERENCES Application(AppId),
   CONSTRAINT FK_AccessRule_Resource FOREIGN KEY (ResourceId) REFERENCES Resource(ResourceId),
-  CONSTRAINT FK_AccessRule_AccessRuleType FOREIGN KEY (RuleTypeId) REFERENCES AccessRuleType(RuleTypeId)
-)
+  CONSTRAINT FK_AccessRule_AccessRuleType FOREIGN KEY (RuleTypeId) REFERENCES RuleType(RuleTypeId)
 GO

@@ -1,0 +1,12 @@
+-- Database creation script for GAuth
+-- Name: GAuth_DEV
+
+IF EXISTS (SELECT * FROM sys.databases WHERE name = N'GAuth_DEV')
+BEGIN
+  ALTER DATABASE [GAuth_DEV] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+  DROP DATABASE [GAuth_DEV];
+END
+GO
+
+CREATE DATABASE [GAuth_DEV];
+GO
